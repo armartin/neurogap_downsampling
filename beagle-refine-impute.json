@@ -1,0 +1,55 @@
+{
+  "##_COMMENT0": "INPUT/OUTPUT VCF",
+  "LowCovImputation.input_vcf": "gs://neurogap/high_coverage/neurogap_4.0X.vcf.gz",
+  "LowCovImputation.refined_base": "gs://neurogap/high_coverage/neurogap_4.0X.refined",
+  "LowCovImputation.imputed_base": "gs://neurogap/high_coverage/neurogap_4.0X.imputed",
+
+  "##_COMMENT1": "REFERENCE FILES",
+  "#LowCovImputation.reference_refine": "gs://neurogap/reference_data/AFR.chr15.shapeit2_integrated_v1a.GRCh38.20181129.phased.vcf.gz",
+  "#LowCovImputation.reference_impute": "gs://neurogap/reference_data/ALL.chr15.shapeit2_integrated_v1a.GRCh38.20181129.phased.vcf.gz",
+  "#LowCovImputation.recomb_map": "gs://neurogap/reference_data/plink.chr14.GRCh38.map",
+  "LowCovImputation.ref_file": "gs://neurogap/reference_data/ref_files.txt",
+
+  "##_COMMENT2": "TO REFINE OR NOT TO REFINE",
+  "LowCovImputation.run_refine_genotypes": "true",
+  "LowCovImputation.run_impute_genotypes": "true",
+
+  "##_COMMENT3": "INTERVALS",
+  "LowCovImputation.intervals_file": "gs://neurogap/reference_data/hg38_wgs_refine_intervals_5mb_overlapping.txt",
+  "LowCovImputation.intervals_chrom": "gs://neurogap/reference_data/hg38_wgs_refine_intervals.txt",
+  "LowCovImputation.eval_interval_list": "gs://broad-references/hg38/v0/wgs_evaluation_regions.hg38.interval_list",
+
+  "##_COMMENT4": "RESOURCE FILES",
+  "LowCovImputation.ref_fasta": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.fasta",
+  "LowCovImputation.ref_fasta_index": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
+  "LowCovImputation.ref_dict": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.dict",
+  "LowCovImputation.dbsnp_vcf": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf",
+  "LowCovImputation.dbsnp_vcf_index": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.idx",
+
+  "##_COMMENT5": "DOCKERS",
+  "#LowCovImputation.beagle_docker_override": "String? (optional)",
+  "#LowCovImputation.gatk_docker_override": "String? (optional)",
+  "#LowCovImputation.gitc_docker_override": "String? (optional)",
+
+  "##_COMMENT6": "PATHS",
+  "#LowCovImputation.gatk_path_override": "String? (optional)",
+  "#LowCovImputation.samtools_path_override": "String? (optional)",
+
+  "##_COMMENT7": "JAVA OPTIONS",
+  "#LowCovImputation.HaplotypeCaller.java_options": "String? (optional)",
+
+  "##_COMMENT8": "MEMORY ALLOCATION",
+  "#LowCovImputation.HaplotypeCaller.mem_gb": "Int? (optional)",
+  "#LowCovImputation.MergeGVCFs.mem_gb": "Int? (optional)",
+  "#LowCovImputation.CramToBamTask.machine_mem_gb": "Int? (optional)",
+
+  "##_COMMENT9": "DISK SIZE ALLOCATION",
+  "#LowCovImputation.HaplotypeCaller.disk_space_gb": "Int? (optional)",
+  "#LowCovImputation.MergeGVCFs.disk_space_gb": "Int? (optional)",
+  "#LowCovImputation.CramToBamTask.disk_space_gb": 300,
+
+  "##_COMMENT10": "PREEMPTION",
+  "#LowCovImputation.HaplotypeCaller.preemptible_attempts": "Int? (optional)",
+  "#LowCovImputation.MergeGVCFs.preemptible_attempts": "Int? (optional)",
+  "#LowCovImputation.CramToBamTask.preemptible_attempts": 4
+}
