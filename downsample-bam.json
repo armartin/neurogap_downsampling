@@ -1,0 +1,32 @@
+{
+  "##_COMMENT1": "INPUT BAM",
+  "DownsampleBam.bam_files_list": "gs://neurogap/high_coverage/WGS/downsample-bam-failed-20.0.txt",
+  "DownsampleBam.target_depth": 20,
+  "#DownsampleBam.input_bam": "gs://neurogap/high_coverage/WGS/AAJO2J0L-02/v1/AAJO2J0L-02.cram",
+
+  "##_COMMENT2": "REFERENCE FILES",
+  "DownsampleBam.ref_dict": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.dict",
+  "DownsampleBam.ref_fasta": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.fasta",
+  "DownsampleBam.ref_fasta_index": "gs://broad-references/hg38/v0/Homo_sapiens_assembly38.fasta.fai",
+
+  "##_COMMENT3": "DOCKERS",
+  "#DownsampleBam.gatk_docker_override": "String? (optional)",
+  "#DownsampleBam.gitc_docker_override": "String? (optional)",
+  
+  "##_COMMENT4": "PATHS",
+  "#DownsampleBam.gatk_path_override": "String? (optional)",
+  "#DownsampleBam.samtools_path_override": "String? (optional)",
+
+  "##_COMMENT5": "JAVA OPTIONS",
+  "#DownsampleBam.java_options": "String? (optional)",
+
+  "##_COMMENT6": "MEMORY ALLOCATION",
+  "#DownsampleBam.mem_gb": "Int? (optional)",
+  "#DownsampleBam.machine_mem_gb": "Int? (optional)",
+
+  "##_COMMENT7": "DISK SIZE ALLOCATION",
+  "#DownsampleBam.disk_space_gb": "Int? (optional)",
+
+  "##_COMMENT8": "PREEMPTION",
+  "#DownsampleBam.preemptible_attempts": "Int? (optional)"
+}
