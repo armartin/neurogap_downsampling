@@ -1,0 +1,28 @@
+{
+  "##_COMMENT0": "INPUT/OUTPUT BAM",
+  "BamToFastq.input_bams_file": "gs://neurogap/high_coverage/WGS/neurogap.sample_bam2",
+
+  "##_COMMENT5": "DOCKERS",
+  "#BamToFastq.gatk_docker_override": "String? (optional)",
+
+  "##_COMMENT6": "PATHS",
+  "#BamToFastq.gatk_path_override": "String? (optional)",
+
+  "##_COMMENT7": "JAVA OPTIONS",
+  "#BamToFastq.HaplotypeCaller.java_options": "String? (optional)",
+
+  "##_COMMENT8": "MEMORY ALLOCATION",
+  "#BamToFastq.HaplotypeCaller.mem_gb": "Int? (optional)",
+  "#BamToFastq.MergeGVCFs.mem_gb": "Int? (optional)",
+  "#BamToFastq.CramToBamTask.machine_mem_gb": "Int? (optional)",
+
+  "##_COMMENT9": "DISK SIZE ALLOCATION",
+  "#BamToFastq.HaplotypeCaller.disk_space_gb": "Int? (optional)",
+  "#BamToFastq.MergeGVCFs.disk_space_gb": "Int? (optional)",
+  "#BamToFastq.CramToBamTask.disk_space_gb": 300,
+
+  "##_COMMENT10": "PREEMPTION",
+  "#BamToFastq.HaplotypeCaller.preemptible_attempts": "Int? (optional)",
+  "#BamToFastq.MergeGVCFs.preemptible_attempts": "Int? (optional)",
+  "#BamToFastq.CramToBamTask.preemptible_attempts": 4
+}

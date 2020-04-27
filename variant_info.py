@@ -4,16 +4,20 @@ import argparse
 import numpy as np
 
 
-def load_files(file_prefix, overwrite):
+def load_files(file_prefix, overwrite, gencove, mt):
     """
     loads VCFs, run sample QC and variant QC, writes matrix table
     :param file_prefix:
     :param overwrite:
     :return:
     """
-    ngap_downsample = hl.import_vcf(file_prefix + '.vcf.gz', force_bgz=True, reference_genome='GRCh38',
-                                    min_partitions=200)
-    ngap_downsample = hl.split_multi_hts(ngap_downsample)
+    if gencove:
+        ngap_downsample = hl.read_matrix_table(file_prefix + '_grch38.mt')
+    else:
+        ngap_downsample = hl.import_vcf(file_prefix + '.vcf.gz', force_bgz=True, reference_genome='GRCh38',
+                                        min_partitions=200)
+        ngap_downsample = hl.split_multi_hts(ngap_downsample)
+    ngap_downsample = ngap_downsample.filter_cols((ngap_downsample .s != 'NGE0018') & (ngap_downsample .s != 'NGE0130'))
     ngap_sample_qc = hl.sample_qc(ngap_downsample)
     ngap_sample_variant_qc = hl.variant_qc(ngap_sample_qc)
     ngap_sample_variant_qc.write(file_prefix + '.mt', overwrite=overwrite)
@@ -80,7 +84,7 @@ def concordance_tables(full_vcf, downsample_dict, output, overwrite):
 def concordance_frequency(full_vcf, concordance_table, output):
     full_variant_qc = full_vcf.rows()
     concordance_qc = full_variant_qc.annotate(concordance=concordance_table[full_variant_qc.key])
-    freqs = list(np.linspace(0.5, 0, num=93))
+    freqs = list(np.linspace(0.5, 0, num=91)) ## note, this will need to be updated
     concordance_stats = concordance_qc.group_by(
         freq=hl.array(freqs).find(lambda x: concordance_qc.variant_qc.AF[1] >= x),
         snp=hl.is_snp(concordance_qc.alleles[0], concordance_qc.alleles[1])
@@ -114,7 +118,7 @@ def concordance_frequency(full_vcf, concordance_table, output):
 
 
 def main(args):
-    if args.chip:
+    if args.chip or args.gencove:
         file_prefix = args.downsample_prefix + '{cov}'
     else:
         file_prefix = args.downsample_prefix + '{cov}X'
@@ -128,9 +132,9 @@ def main(args):
 
     if args.load_files:
         for cov in args.covs:
-            load_files(file_prefix=file_prefix.format(cov=cov), overwrite=args.overwrite)
-
-        load_files(file_prefix=args.allreads_prefix, overwrite=args.overwrite)
+            load_files(file_prefix=file_prefix.format(cov=cov), overwrite=args.overwrite, gencove=args.gencove, mt=args.mt)
+        # full depth mt
+        load_files(file_prefix=args.allreads_prefix, overwrite=args.overwrite, gencove=False, mt=args.mt)
 
     if args.geno_stats:
         ht_dict = {cov: hl.read_matrix_table(file_prefix.format(cov=cov) + '.mt').cols().annotate(cov=cov) for cov in args.covs}
@@ -177,6 +181,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--covs', type=lambda x: x.split(','), default=['0.5', '1.0', '2.0', '4.0', '6.0', '10.0', '20.0'], help="A comma separated list IDs")
     parser.add_argument('--downsample_prefix', default='gs://neurogap/high_coverage/neurogap_')
+    parser.add_argument('--gencove', action='store_true')
+    parser.add_argument('--mt', action='store_true')
     parser.add_argument('--refined', action='store_true')
     parser.add_argument('--imputed', action='store_true')
     parser.add_argument('--chip', action='store_true')
