@@ -1,3 +1,6 @@
+# Full depth mt grch38
+pilot_grch38 = 'gs://neurogap/high_coverage/NeuroGap_30x_Pilot_Callset.mt'
+
 # Gencove mt hg19
 gencove_0.5_hg19 = 'gs://neurogap/high_coverage/gencove/merge_0.5_hg19.mt'
 gencove_1_hg19 = 'gs://neurogap/high_coverage/gencove/merge_1_hg19.mt'

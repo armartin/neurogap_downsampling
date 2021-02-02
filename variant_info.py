@@ -14,6 +14,7 @@ def load_files(file_prefix, overwrite, gencove, mt):
     if gencove:
         ngap_downsample = hl.read_matrix_table(file_prefix + '_grch38.mt')
     else:
+        print(file_prefix + '.vcf.gz')
         ngap_downsample = hl.import_vcf(file_prefix + '.vcf.gz', force_bgz=True, reference_genome='GRCh38',
                                         min_partitions=200)
         ngap_downsample = hl.split_multi_hts(ngap_downsample)
@@ -82,6 +83,13 @@ def concordance_tables(full_vcf, downsample_dict, output, overwrite):
 
 
 def concordance_frequency(full_vcf, concordance_table, output):
+    """
+    exports concordance table as a function of frequency within each bin.
+    :param full_vcf:
+    :param concordance_table:
+    :param output:
+    :return:
+    """
     full_variant_qc = full_vcf.rows()
     concordance_qc = full_variant_qc.annotate(concordance=concordance_table[full_variant_qc.key])
     freqs = list(np.linspace(0.5, 0, num=91)) ## note, this will need to be updated
@@ -118,6 +126,12 @@ def concordance_frequency(full_vcf, concordance_table, output):
 
 
 def main(args):
+    """
+    Filenames:
+    chip or gencove: add
+    :param args:
+    :return:
+    """
     if args.chip or args.gencove:
         file_prefix = args.downsample_prefix + '{cov}'
     else:
@@ -129,7 +143,9 @@ def main(args):
     elif args.imputed:
         file_prefix = file_prefix + '.imputed'
         downsample_prefix = downsample_prefix + '.imputed'
-
+    elif args.topmed:
+        file_prefix = file_prefix + '_topmed.dose'
+        downsample_prefix = downsample_prefix + '_topmed.dose'
     if args.load_files:
         for cov in args.covs:
             load_files(file_prefix=file_prefix.format(cov=cov), overwrite=args.overwrite, gencove=args.gencove, mt=args.mt)
@@ -185,6 +201,7 @@ if __name__ == '__main__':
     parser.add_argument('--mt', action='store_true')
     parser.add_argument('--refined', action='store_true')
     parser.add_argument('--imputed', action='store_true')
+    parser.add_argument('--topmed', action='store_true')
     parser.add_argument('--chip', action='store_true')
     parser.add_argument('--allreads_prefix', default='gs://neurogap/high_coverage/NeuroGap_30x_Pilot_Callset')
     parser.add_argument('--overwrite', action='store_true')

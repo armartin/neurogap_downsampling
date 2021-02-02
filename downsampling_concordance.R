@@ -7,7 +7,7 @@ library(mapdata)
 library(raster)
 library(ggmap)
 
-setwd('/Users/alicia/daly_lab/neurogap/data/high_coverage/stats')
+setwd('/Users/alicia/martin_lab/projects/neurogap/data/high_coverage/stats')
 
 sample_id_map <- read.table('../sample_id_map.txt', header=T)
 depth <- read.table('../downsample-bam.txt') %>%
@@ -19,7 +19,7 @@ depth %>%
   group_by(site) %>%
   summarize(mean_cov=mean(V2), sd_cov=sd(V2), min_cov=min(V2), max_cov=max(V2))
 
-read_file <- function(coverage, refined=FALSE, imputed=FALSE, array=FALSE, gencove=FALSE, gencove_compare=FALSE, imputed_compare=FALSE) {
+read_file <- function(coverage, refined=FALSE, imputed=FALSE, array=FALSE, topmed=FALSE, gencove=FALSE, gencove_compare=FALSE, imputed_compare=FALSE) {
   if(refined) {
     filename <- paste0('neurogap_', coverage, 'X.refined_concordance_variants.tsv')
     process <- 'Refined'
@@ -29,6 +29,9 @@ read_file <- function(coverage, refined=FALSE, imputed=FALSE, array=FALSE, genco
   } else if (array) {
     filename <- paste0('NeuroGap_30x_', coverage, '.imputed_concordance_variants.tsv')
     process <- 'Imputed'
+  } else if (topmed) {
+    filename <- paste0('NeuroGap_30x_', coverage, '_topmed.dose_concordance_variants.tsv')
+    process <- 'TOPMed'
   } else if (gencove) {
     filename <- paste0('../gencove/stats/merge_', coverage, '_concordance_variants.tsv')
     process <- 'Gencove'
@@ -76,6 +79,7 @@ refined_concordance <- map_dfr(lowcovs, function(x) {read_file(x, refined=TRUE)}
 imputed_concordance <- map_dfr(lowcovs, function(x) {read_file(x, imputed=TRUE)} )
 gencove_concordance <- map_dfr(lowcovs, function(x) {read_file(x, gencove=TRUE)})
 array_concordance <- map_dfr(arrays, function(x) {read_file(x, array=TRUE)} )
+topmed_concordance <- map_dfr(arrays, function(x) {read_file(x, topmed=TRUE)} )
 gencove_compare <- map_dfr(lowcovs, function(x) {read_file(x, gencove_compare=TRUE)})
 imputed_compare <- map_dfr(lowcovs, function(x) {read_file(x, imputed_compare=TRUE)})
 raw_concordance$cov <- factor(raw_concordance$cov, levels=c(rev(covs)))
@@ -189,7 +193,20 @@ p2_7 <- ggplot(subset(snp_concordance, process=='Imputed' & cov %in% c('2.0', '4
 
 ggsave('snp_downsampling_imputed_only_grant.pdf', p2_7, width=5, height=5)
 
+p2_8 <- ggplot(subset(snp_concordance, process=='Imputed' & cov %in% c('2.0', '4.0', '6.0', 'GSA', 'Omni2.5')), aes(x=freq, y=non_ref_concordance, color=cov, fill=cov, size=n_variants, shape=cov)) +
+  geom_point() +
+  labs(x='Frequency', y='Non-reference concordance') +
+  scale_color_brewer(name='Depth/Array', palette='Set1') +
+  scale_fill_brewer(name='Depth/Array', palette='Set1') +
+  scale_shape_manual(name='Depth/Array', values=shape_vec) +
+  scale_y_continuous(minor_breaks = seq(0 , 1, length.out=11), breaks = seq(0, 1, length.out=6), limits=c(0,1)) +
+  guides(size=FALSE) +
+  theme_bw() +
+  theme(text = element_text(size=16),
+        legend.position = c(.95,.05),
+        legend.justification = c(1,0))
 
+ggsave('snp_downsampling_imputed_only_hailiang.pdf', p2_8, width=4, height=4)
 
 # Concordance by population -----------------------------------------------
 
@@ -257,6 +274,11 @@ ggsave('site_concordance.pdf', p3, width=12, height=5)
 
 gencove_anc <- read.delim('../gencove/ancestry/gencove_metadata_anc.txt', header=T, sep='\t') 
 
+master_phenos <- read.csv('/Users/alicia/daly_lab/neurogap/data/phenotypes/ngpsych_FROZEN_08apr2019.csv', header=T)
+
+gencove_anc %>%
+  left_join(master_phenos, by=c('sample'='collaborator_participant_id'))
+  
 gencove_anc_grouped <- gencove_anc %>%
   gather('ancestry', 'ancestry_fraction', CAFRICA:WAFRICA)
 
@@ -268,7 +290,7 @@ p_anc <- ggplot(gencove_anc_grouped, aes(x=ancestry_fraction, fill=ancestry)) +
 
 ggsave('gencove_anc.pdf', p_anc, width=12, height=4)
 
-primary_eth <- count(gencove_anc, site, ethnicity_1)
+primary_eth <- count(gencove_anc %>% filter(!sample %in% c('NGE0018', 'NGE0130')), site, ethnicity_1)
 write.table(primary_eth, 'primary_eth.txt', quote=F, row.names=F, sep='\t')
 
 
